@@ -5,7 +5,7 @@ Tested up to: 3.0.1
 Stable tag: trunk
 Tags: thingiverse, shortcode, embed, object, stream, rss
 
-Allows the use of a [thingiverse] shortcode to embed [Thingiverse](http://www.thingivierse.com) Things in a post or page.  Also includes a Thingiverse Stream widget for embedding Thingiverse streams in sidebars.
+Allows the use of a [thingiverse] shortcode to embed <a href="http://www.thingiverse.com">Thingiverse</a> Things in a post or page.  Also includes a Thingiverse Stream widget for embedding Thingiverse streams in sidebars.
 
 NOTE: I am not affiliated with Thingiverse, but I do want to embed the Things that I make there into my blog from time-to-time. :)
 
