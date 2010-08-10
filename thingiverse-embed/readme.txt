@@ -30,11 +30,13 @@ The Thingiverse Stream widget allows you to embed Thingiverse streams into your 
 There are two types of streams: *Global* and *User*.  *User* streams require you to specify a Thingiverse username.
 
 *User Streams*
+
 - `designed` - content from http://www.thingiverse.com/<User>/things
 - `like` - content from http://www.thingiverse.com/<User>/favorites
 - `made` - content from http://www.thingiverse.com/<User>/made
 
 *Global Streams*
+
 - `featured` content from http://www.thingiverse.com/featured
 - `newest` content from http://www.thingiverse.com/newest
 - `popular` content from http://www.thingiverse.com/popular
