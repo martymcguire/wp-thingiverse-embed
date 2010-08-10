@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Thingiverse Embed
-Plugin URI: ...
+Plugin URI: http://creatingwithcode.com/software/thingiverse-embed-wordpress/
 Description: Adds a [thingiverse] shortcode to embed <a href="http://www.thingiverse.com/">Thingiverse</a> Things in a post or page, and a Thingiverse Stream widget to embed streams in sidebars.
 Version: 0.1
 Author: Marty McGuire
