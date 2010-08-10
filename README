@@ -1,0 +1,12 @@
+Here's a little plugin for Wordpress to let you embed Thingiverse Things
+into your posts and pages, and embed a Thingiverse Stream widget into your
+sidebars.
+
+To install:
+
+1. Clone this repository
+2. Copy the thingiverse-embed/ directory to your Wordpress' plugins directory.
+3. Activate the plugin
+4. Embed some [thingiverse] shortcodes and Thingiverse Stream widgets!
+
+Check the thingiverse-embed/readme.txt file for more details.
