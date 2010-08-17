@@ -50,7 +50,9 @@ class ThingiverseThing {
     $this->creator = $creator_url_node->childNodes->item(0)->wholeText;
 
     // Get creator image
-    $this->creator_img = $xp->query("//a[@href=\"" . $this->creator_url . "\"]/img[@class=\"render\"]")->item(0)->getAttribute("src");
+    $creator_img_node = $xp->query("//a[@href=\"" . $this->creator_url . "\"]/img[@class=\"render\"]")->item(0);
+    $this->creator_img = ($creator_img_node == null) ?
+                         null : $creator_img_node->getAttribute("src");
 
     // Get left sidebar images of the thing
     // Creates an array of assoc. arrays: href => "link to image", img => "image src"

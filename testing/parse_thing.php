@@ -1,6 +1,7 @@
 <?php
-require("thingiverse/lib/thingiverse_thing.php");
-$thing = new ThingiverseThing("testing/thing_1046.html");
+require("lib/thingiverse_thing.php");
+$thing = new ThingiverseThing("http://www.thingiverse.com/thing:782");
+#$thing = new ThingiverseThing("testing/thing_1046.html");
 //$thing = new ThingiverseThing("http://www.thingiverse.com/thing:1046");
 ?>
 <!-- RENDER THING -->
