@@ -171,6 +171,7 @@ class ThingiverseThing {
   }
 
   private function nodeContent ( $n, $outer = true ) {
+      if( $n == null ) { return null; }
       $d = new DOMDocument('1.0');
       $b = $d->importNode($n->cloneNode(true),true);
       $d->appendChild($b); $h = $d->saveHTML();
