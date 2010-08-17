@@ -31,8 +31,11 @@ require_once("thingiverse-stream-widget.php");
 // [thingiverse thing_id="thing-id-number"]
 function thingiverse_shortcode_func($atts, $content = null) {
   extract(shortcode_atts(array(
-    'thing_id' => '1842'
+    'thing' => 'none',
+    'thing_id' => 'none'
   ), $atts));
+
+  if( $thing_id == 'none' && $thing != 'none' ){ $thing_id = $thing; }
   $thing_url = Thingiverse::BASE_URL . "/thing:" . trim($thing_id);
 
   $thing = new ThingiverseThing($thing_url);
