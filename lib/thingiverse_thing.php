@@ -116,7 +116,7 @@ class ThingiverseThing {
     $dxp = new DomXpath($desc_dom);
     $img_elem = $dxp->query("//img")->item(0);
     $thing->main_image = ($img_elem ? $img_elem->getAttribute("src") : null);
-    $desc_elem = $dxp->query("//td")->item(1);
+    $desc_elem = $dxp->query("//div")->item(1);
     $thing->description = trim(
        $desc_elem ? 
          ThingiverseThing::nodeContent($desc_elem, false) :
