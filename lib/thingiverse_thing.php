@@ -18,7 +18,7 @@ class ThingiverseThing {
   public $created_at;
   public $title = "Untitled";
   public $creator = "Unknown";
-  public $creator_url;
+  public $creator_url = "http://www.thingiverse.com/";
   public $creator_img;
   public $images = array();
   public $main_image;
@@ -43,48 +43,48 @@ class ThingiverseThing {
     // FIXME: check for parse error. set some kind of thing status!
 
     // Get thing $title, $creator, $creator_url
-    $title_node = $xp->query("//h1[attribute::id=\"pageTitle\"]")->item(0);
-    $this->title = str_replace(" by ", "", $title_node->childNodes->item(0)->wholeText);
-    $creator_url_node = $title_node->childNodes->item(1);
-    $this->creator_url = $creator_url_node->getAttribute("href");
-    $this->creator = $creator_url_node->childNodes->item(0)->wholeText;
+    $title_node = $xp->query("//div[attribute::id=\"thing-meta\"]//h1")->item(0);
+	if($title_node->childNodes){
+		$this->title = $title_node->childNodes->item(0)->wholeText;
+	}
+	$creator_url_node = $xp->query("//div[attribute::class=\"byline\"]/a")->item(0);
+	if($creator_url_node){
+		$this->creator_url = $creator_url_node->getAttribute("href");
+		$this->creator = $creator_url_node->childNodes->item(0)->wholeText;
+	}
 
     // Get creator image
     $creator_img_node = $xp->query("//a[@href=\"" . $this->creator_url . "\"]/img[@class=\"render\"]")->item(0);
     $this->creator_img = ($creator_img_node == null) ?
                          null : $creator_img_node->getAttribute("src");
 
-    // Get left sidebar images of the thing
-    // Creates an array of assoc. arrays: href => "link to image", img => "image src"
-    $image_nodes = $xp->query("//a[starts-with(@href, \"/image:\")][descendant::img[attribute::class=\"render\"]]");
-    foreach ($image_nodes as $img_node){
-      $img = array("href" => $img_node->getAttribute("href"),
-                   "img"  => $img_node->childNodes->item(0)->getAttribute("src"));
-      array_push($this->images, $img);
-    }
-    if ( count($this->images) > 0 ) {
-      $this->main_image = $this->images[0]["img"];
-    }
+    // Get thumbnail image of Thing.
+    $image_node = $xp->query("//div[attribute::id=\"thing-gallery-main\"]/a[starts-with(@href, \"/image:\")]/img[attribute::class=\"render\"]")->item(0);
+	if($image_node){
+		$this->main_image = $image_node->getAttribute("src");
+	}
 
     // Get $description
-    $this->description = trim($this->nodeContent($xp->query("//h2[text()=\"Description\"]/following-sibling::p")->item(0), false));
+    $this->description = trim($this->nodeContent($xp->query("//div[attribute::id=\"thing-description\"]")->item(0), false));
 
     // Get $instructions
-    $this->instructions = trim($this->nodeContent($xp->query("//h2[text()=\"Instructions\"]/following-sibling::p")->item(0), false));
+    $this->instructions = trim($this->nodeContent($xp->query("//div[attribute::id=\"thing-instructions\"]/p")->item(0), false));
 
     // Get $downloads (array of assoc. arrays. name,img,url,size,count,render_error)
-    $download_nodes = $xp->query("//h2[text()=\"Downloads\"]/following-sibling::table");
+    $download_nodes = $xp->query("//div[attribute::id=\"thing-files\"]/div[attribute::class=\"thing-file\"]");
     for($i = 0; $i < $download_nodes->length; $i++){
       $dln = $download_nodes->item($i);
       $d = new DOMDocument('1.0');
       $b = $d->importNode($dln->cloneNode(true),true);
       $d->appendChild($b);
       $dlxp = new DomXpath($d);
-      $size_count_str = $dlxp->query("//td")->item(1)->childNodes->item(2)->nodeValue;
+
+      $size_count_str = $dlxp->query("//div[attribute::class=\"thing-status\"]/div")->item(0)->nodeValue;
       list($size, $count) = explode("/", $size_count_str);
+	  // does this still work???
       $err_div = ($dlxp->query("//div[@class=\"BaseError\"]")->length > 0);
       $dl = array( 
-              "name" => trim($dlxp->query("//h3")->item(0)->nodeValue),
+              "name" => trim($dlxp->query("//div[attribute::class=\"thing-status\"]/a")->item(0)->getAttribute("title")),
               "img" => $dlxp->query("//img[@class=\"render\"]/attribute::src")->item(0)->value,
               "url" => $dlxp->query("//a[starts-with(@href,\"/download\")]")->item(0)->getAttribute("href"),
               "size" => trim($size),
@@ -93,6 +93,7 @@ class ThingiverseThing {
             );
       array_push($this->downloads, $dl);
     }
+
   }
 
   public static function from_rss_item_dom( $dom ) {

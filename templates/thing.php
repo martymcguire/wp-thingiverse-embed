@@ -5,7 +5,7 @@
 <a href="<?php echo $thing->url ?>"><img class="thing-image" src="<?php echo $thing->main_image ?>" /></a>
 </div>
 <div class="thing-description">
-<?php echo $thing->description ?>
+<?php echo strip_tags($thing->description); ?>
 </div>
 </div>
 <div class="thingiverse-thing-meta">

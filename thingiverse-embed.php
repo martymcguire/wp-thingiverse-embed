@@ -38,12 +38,20 @@ function thingiverse_shortcode_func($atts, $content = null) {
   if( $thing_id == 'none' && $thing != 'none' ){ $thing_id = $thing; }
   $thing_url = Thingiverse::BASE_URL . "/thing:" . trim($thing_id);
 
-  $thing = new ThingiverseThing($thing_url);
+  if($thing_id != 'none'){
+    $thing = new ThingiverseThing($thing_url);
+  } else {
+    $thing = null;
+  }
 
-  ob_start();
-  include("templates/thing.php");
-  $html = ob_get_contents();
-  ob_end_clean();
+  if($thing != null && ($thing->creator_url != "http://www.thingiverse.com/")){
+    ob_start();
+    include("templates/thing.php");
+    $html = ob_get_contents();
+    ob_end_clean();
+  } else {
+	$html = "<pre>Error - could not find Thing {$thing_id}.</pre>";
+  }
 
   // TODO: think of something cool to do with inline content
   if($content != null){
