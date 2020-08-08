@@ -28,11 +28,23 @@ class ThingiverseThing {
 
   function __construct( $thing_url = "" ) {
     if( $thing_url != null ) {
-      $this->url = $thing_url;
-      $dom = new DomDocument("1.0");
-      // use @ to suppress parser warnings
-      @$dom->loadHTMLfile($thing_url);
-      $this->initialize_from_dom($dom);
+      // copy from the cache if it exists
+      $thing_id = substr($thing_url, strrpos($thing_url, ':') + 1);
+      $thing_cache_id = "thingiverse-embed-thing-$thing_id";
+      $cached_thing = get_transient($thing_cache_id);
+      if(false === $cached_thing){
+        $this->url = $thing_url;
+        $dom = new DomDocument("1.0");
+        // use @ to suppress parser warnings
+        @$dom->loadHTMLfile($thing_url);
+        $this->initialize_from_dom($dom);
+        // cache for 1 hour
+        set_transient($thing_cache_id, $this, 3600);
+      } else {
+        foreach(get_object_vars($cached_thing) as $prop => $value){
+          $this->$prop = $value;
+        }
+      }
     }
   }
 

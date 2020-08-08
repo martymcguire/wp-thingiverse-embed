@@ -68,7 +68,7 @@ class ThingiverseStreamWidget extends WP_Widget {
             Global Streams: <em>newest, featured, popular, derivatives, instances</em><br />
             User Streams: <em>designed, likes, made</em><br />
             </p>
-            <p><label for="<?php echo $this->get_field_id('user'); ?>"><?php _e('User:'); ?> <input class="widefat" id="<?php echo $this->get_field_id('user'); ?>" name="<?php echo $this->get_field_name('user'); ?>" type="text" value="<?php echo $user; ?>" /></label></p>
+            <p><label for="<?php echo $this->get_field_id('user'); ?>"><?php _e('User ID:'); ?> <input class="widefat" id="<?php echo $this->get_field_id('user'); ?>" name="<?php echo $this->get_field_name('user'); ?>" type="text" value="<?php echo $user; ?>" /></label></p>
             <p><label for="<?php echo $this->get_field_id('max_items'); ?>"><?php _e('Number of Things to show (<em>Default: 3</em>):'); ?> <input class="widefat" id="<?php echo $this->get_field_id('max_items'); ?>" name="<?php echo $this->get_field_name('max_items'); ?>" type="text" value="<?php echo $max_items; ?>" /></label></p>
         <?php 
     }

@@ -67,14 +67,16 @@ class ThingiverseStream {
   }
 
   function initialize_stream_designed() {
-    $this->user_id = Thingiverse::user_id_from_name($this->user);
+//    $this->user_id = Thingiverse::user_id_from_name($this->user);
+    $this->user_id = $this->user;
     $this->url = Thingiverse::BASE_URL . "/rss/user:$this->user_id";
     $this->title = "Newest Things";
     $this->load_stream_from_rss_url();
   }
 
   function initialize_stream_likes() {
-    $this->user_id = Thingiverse::user_id_from_name($this->user);
+//    $this->user_id = Thingiverse::user_id_from_name($this->user);
+    $this->user_id = $this->user;
     $this->url = Thingiverse::BASE_URL . "/rss/user:$this->user_id/likes";
     $this->title = "Newest Likes";
     $this->load_stream_from_rss_url();
@@ -88,23 +90,37 @@ class ThingiverseStream {
     $this->load_stream_from_made_url();
   }
 
-  function load_stream_from_rss_url() {
+  // Returns a DOM object for the specified URL. Pulls it from the transient
+  // cache if it is available, otherwise fetches it.
+  function get_dom_for_url($url){
     $dom = new DomDocument("1.0");
-    @$dom->load($this->url); // use @ to suppress parser warnings
+    // cache key - chop off "http://www.thingiverse.com" and sluggify
+    $t_key = "thingiverse-stream-" . sanitize_title(substr($url,27));
+    $dom_str = get_transient($t_key);
+    if(false === $dom_str){
+      @$dom->load($url); // use @ to suppress parser warnings
+      $xml_data = $dom->saveXML();
+      set_transient($t_key, $xml_data, 3600);
+    } else {
+      @$dom->loadXML($dom_str); // use @ to suppress parser warnings
+    }
+    return $dom;
+  }
+
+  function load_stream_from_rss_url() {
+    $dom = $this->get_dom_for_url($this->url);
     // FIXME: check for parse error. set some kind of thing status!
     $this->parse_things_from_rss_dom($dom);
   }
 
   function load_stream_from_instances_url() {
-    $dom = new DomDocument("1.0");
-    @$dom->loadHTMLFile($this->url); // use @ to suppress parser warnings
+    $dom = $this->get_dom_for_url($this->url);
     // FIXME: check for parse error. set some kind of thing status!
     $this->parse_thing_instances_from_html_dom($dom);
   }
 
   function load_stream_from_made_url() {
-    $dom = new DomDocument("1.0");
-    @$dom->loadHTMLFile($this->url); // use @ to suppress parser warnings
+    $dom = $this->get_dom_for_url($this->url);
     // FIXME: check for parse error. set some kind of thing status!
     $this->parse_thing_mades_from_html_dom($dom);
   }

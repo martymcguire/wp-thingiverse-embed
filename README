@@ -1,3 +1,10 @@
+#version 0.2L 
+
+Version 0.2Lacosox is a fork from original thingiverse-embed wordpress plugin.
+tested at wordress 5.4.2
+
+
+
 Here's a little plugin for Wordpress to let you embed Thingiverse Things
 into your posts and pages, and embed a Thingiverse Stream widget into your
 sidebars.
