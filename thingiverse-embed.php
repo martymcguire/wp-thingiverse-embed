@@ -70,6 +70,6 @@ function enqueue_thingiverse_styles() {
 }
 
 add_shortcode('thingiverse', 'thingiverse_shortcode_func');
-add_action('widgets_init', create_function('', 'return register_widget("ThingiverseStreamWidget");'));
+add_action( 'widgets_init', function() { register_widget( "ThingiverseStreamWidget" ); } );
 add_action( 'wp_print_styles', 'enqueue_thingiverse_styles' );
 ?>

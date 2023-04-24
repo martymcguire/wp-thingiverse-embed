@@ -183,7 +183,7 @@ class ThingiverseThing {
 
   }
 
-  private function nodeContent ( $n, $outer = true ) {
+  private static function nodeContent ( $n, $outer = true ) {
       if( $n == null ) { return null; }
       $d = new DOMDocument('1.0');
       $b = $d->importNode($n->cloneNode(true),true);
@@ -194,7 +194,7 @@ class ThingiverseThing {
   } 
 
   // From http://php.net/manual/en/function.time.php
-  private function _ago($tm,$rcs = 0) {
+  private static function _ago($tm,$rcs = 0) {
     $cur_tm = time(); $dif = $cur_tm-$tm;
     $pds = array('second','minute','hour','day','week','month','year','decade');
     $lngh = array(1,60,3600,86400,604800,2630880,31570560,315705600);

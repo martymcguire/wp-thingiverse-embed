@@ -6,11 +6,20 @@ require_once("lib/thingiverse_stream.php");
  * ThingiverseStreamWidget Class
  */
 class ThingiverseStreamWidget extends WP_Widget {
+	
+	protected $widget_slug = 'thingiverse-embed';
+
     /** constructor */
-    function ThingiverseStreamWidget() {
-        parent::WP_Widget( false, $name = 'Thingiverse Stream',
-                          array(description => "Display Thingiverse.com streams") );
-    }
+	public function __construct() {
+		parent::__construct(
+			$this->widget_slug, 'Thingiverse Stream', $this->widget_slug, array(
+				'classname'   => $this->widget_slug . '-class',
+				'description' => 'Display Thingiverse.com streams',
+				$this->widget_slug
+			)
+		);
+	}
+	
 
     /** @see WP_Widget::widget */
     function widget($args, $instance) {   

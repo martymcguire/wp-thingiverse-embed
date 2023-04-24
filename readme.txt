@@ -1,7 +1,7 @@
 === Thingiverse Shortcode Plugin ===
 Contributors: schmarty
 Requires at least: 3.0
-Tested up to: 5.4.2
+Tested up to: 6.2
 Stable tag: trunk
 Tags: thingiverse, shortcode, embed, object, stream, rss
 
