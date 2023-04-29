@@ -44,7 +44,7 @@ function thingiverse_shortcode_func($atts, $content = null) {
     $thing = null;
   }
 
-  if($thing != null && ($thing->creator_url != "http://www.thingiverse.com/")){
+  if($thing != null && ($thing->creator_url != "https://www.thingiverse.com/")){
     ob_start();
     include("templates/thing.php");
     $html = ob_get_contents();

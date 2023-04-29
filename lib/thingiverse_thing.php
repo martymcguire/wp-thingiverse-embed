@@ -18,13 +18,15 @@ class ThingiverseThing {
   public $created_at;
   public $title = "Untitled";
   public $creator = "Unknown";
-  public $creator_url = "http://www.thingiverse.com/";
+  public $creator_url = "https://www.thingiverse.com/";
   public $creator_img;
   public $images = array();
   public $main_image;
   public $description;
   public $instructions;
   public $downloads = array();
+  public $like_count;
+  public $create_date;
 
   function __construct( $thing_url = "" ) {
     if( $thing_url != null ) {
@@ -33,11 +35,14 @@ class ThingiverseThing {
       $thing_cache_id = "thingiverse-embed-thing-$thing_id";
       $cached_thing = get_transient($thing_cache_id);
       if(false === $cached_thing){
-        $this->url = $thing_url;
-        $dom = new DomDocument("1.0");
-        // use @ to suppress parser warnings
-        @$dom->loadHTMLfile($thing_url);
-        $this->initialize_from_dom($dom);
+        $this->url = $thing_url;       
+        $authorization_header = 'Authorization: Bearer '.$this->get_authorization_token();
+        $options  = ['http' => ['header' => $authorization_header]];
+	$context  = stream_context_create($options);
+	$json = file_get_contents('https://api.thingiverse.com/things/'.$thing_id, false, $context);
+	$obj = json_decode($json);
+	$this->initialize_from_json($obj);
+	
         // cache for 1 hour
         set_transient($thing_cache_id, $this, 3600);
       } else {
@@ -47,65 +52,36 @@ class ThingiverseThing {
       }
     }
   }
+  
+  function get_authorization_token(){
+  	$cached_token = get_transient('thingiverse_authorization_token');
+  	if(false === $cached_token){
+  		$js = file_get_contents('https://cdn.thingiverse.com/site/js/app.bundle.js');
+  		preg_match_all('/,x="\w+/', $js, $matches);
+		$text = $matches[0];
+		$token = substr($text[0],strrpos($text[0], 'x=')+3);
+  		error_log(print_r($token, TRUE)); 
+  		// cache 1 day
+        	set_transient('thingiverse_authorization_token', $token, 86400);
+        	return $token;
+  	}
+  	else{
+  		return $cached_token;
+  	}
+  }
+  
+  function initialize_from_json($obj) {
 
-  function initialize_from_dom($dom) {
-    // get the interesting node
-    $xp = new DomXpath($dom);
-
-    // FIXME: check for parse error. set some kind of thing status!
-
-    // Get thing $title, $creator, $creator_url
-    $title_node = $xp->query("//div[attribute::id=\"thing-meta\"]//h1")->item(0);
-	if($title_node->childNodes){
-		$this->title = $title_node->childNodes->item(0)->wholeText;
-	}
-	$creator_url_node = $xp->query("//div[attribute::class=\"byline\"]/a")->item(0);
-	if($creator_url_node){
-		$this->creator_url = $creator_url_node->getAttribute("href");
-		$this->creator = $creator_url_node->childNodes->item(0)->wholeText;
-	}
-
-    // Get creator image
-    $creator_img_node = $xp->query("//a[@href=\"" . $this->creator_url . "\"]/img[@class=\"render\"]")->item(0);
-    $this->creator_img = ($creator_img_node == null) ?
-                         null : $creator_img_node->getAttribute("src");
-
-    // Get thumbnail image of Thing.
-    $image_node = $xp->query("//div[attribute::id=\"thing-gallery-main\"]/a[starts-with(@href, \"/image:\")]/img[attribute::class=\"render\"]")->item(0);
-	if($image_node){
-		$this->main_image = $image_node->getAttribute("src");
-	}
-
-    // Get $description
-    $this->description = trim($this->nodeContent($xp->query("//div[attribute::id=\"thing-description\"]")->item(0), false));
-
-    // Get $instructions
-    $this->instructions = trim($this->nodeContent($xp->query("//div[attribute::id=\"thing-instructions\"]/p")->item(0), false));
-
-    // Get $downloads (array of assoc. arrays. name,img,url,size,count,render_error)
-    $download_nodes = $xp->query("//div[attribute::id=\"thing-files\"]/div[attribute::class=\"thing-file\"]");
-    for($i = 0; $i < $download_nodes->length; $i++){
-      $dln = $download_nodes->item($i);
-      $d = new DOMDocument('1.0');
-      $b = $d->importNode($dln->cloneNode(true),true);
-      $d->appendChild($b);
-      $dlxp = new DomXpath($d);
-
-      $size_count_str = $dlxp->query("//div[attribute::class=\"thing-status\"]/div")->item(0)->nodeValue;
-      list($size, $count) = explode("/", $size_count_str);
-	  // does this still work???
-      $err_div = ($dlxp->query("//div[@class=\"BaseError\"]")->length > 0);
-      $dl = array( 
-              "name" => trim($dlxp->query("//div[attribute::class=\"thing-status\"]/a")->item(0)->getAttribute("title")),
-              "img" => $dlxp->query("//img[@class=\"render\"]/attribute::src")->item(0)->value,
-              "url" => $dlxp->query("//a[starts-with(@href,\"/download\")]")->item(0)->getAttribute("href"),
-              "size" => trim($size),
-              "count" => trim($count),
-              "render_error" => ($err_div ? "yes" : "no"),
-            );
-      array_push($this->downloads, $dl);
-    }
-
+  	$this->title 		= $obj-> name;
+  	$this->creator_url 	= $obj-> creator -> public_url;
+  	$this->creator		= $obj-> creator -> name;
+  	$this->creator_img	= $obj-> creator -> thumbnail;
+  	$this->main_image 	= $obj-> thumbnail;
+  	$this->description	= $obj-> description;
+  	$this->instructions	= $obj-> instructions;
+  	$this->like_count	= $obj-> like_count;
+  	$this->create_date	= $obj-> added;
+  	
   }
 
   public static function from_rss_item_dom( $dom ) {
