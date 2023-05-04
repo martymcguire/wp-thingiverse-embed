@@ -25,7 +25,7 @@ class ThingiverseStream {
 
   function __construct( $type = "newest", $user = null ) {
     $this->user = $user;
-    $this->user_url = (is_null($user) ? null : Thingiverse::BASE_URL . "/$user");
+    $this->user_url = (is_null($user) ? null : Thingiverse::BASE_URL . "/user:$user");
     $method_name = "initialize_stream_$type";
     if(method_exists($this, $method_name)){
       call_user_func( array($this, $method_name) );
