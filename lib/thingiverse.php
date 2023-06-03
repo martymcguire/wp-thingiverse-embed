@@ -2,7 +2,7 @@
 
 class Thingiverse {
    
-  const BASE_URL = "http://www.thingiverse.com";
+  const BASE_URL = "https://www.thingiverse.com";
 
   public static function user_id_from_name( $user ) {
     $url = Thingiverse::BASE_URL . "/$user";

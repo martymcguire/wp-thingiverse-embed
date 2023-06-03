@@ -3,7 +3,7 @@
 Plugin Name: Thingiverse Embed
 Plugin URI: http://creatingwithcode.com/software/thingiverse-embed-wordpress/
 Description: Adds a [thingiverse] shortcode to embed <a href="http://www.thingiverse.com/">Thingiverse</a> Things in a post or page, and a Thingiverse Stream widget to embed streams in sidebars.
-Version: 0.1
+Version: 0.2
 Author: Marty McGuire
 Author URI: http://www.creatingwithcode.com/
 
@@ -44,7 +44,7 @@ function thingiverse_shortcode_func($atts, $content = null) {
     $thing = null;
   }
 
-  if($thing != null && ($thing->creator_url != "http://www.thingiverse.com/")){
+  if($thing != null && ($thing->creator_url != "https://www.thingiverse.com/")){
     ob_start();
     include("templates/thing.php");
     $html = ob_get_contents();
@@ -70,6 +70,6 @@ function enqueue_thingiverse_styles() {
 }
 
 add_shortcode('thingiverse', 'thingiverse_shortcode_func');
-add_action('widgets_init', create_function('', 'return register_widget("ThingiverseStreamWidget");'));
+add_action( 'widgets_init', function() { register_widget( "ThingiverseStreamWidget" ); } );
 add_action( 'wp_print_styles', 'enqueue_thingiverse_styles' );
 ?>
